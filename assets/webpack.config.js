@@ -1,5 +1,4 @@
 const path = require('path');
-const glob = require('glob');
 const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -16,8 +15,11 @@ module.exports = (env, options) => {
         new OptimizeCSSAssetsPlugin({})
       ]
     },
+    resolve: {
+      extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    },
     entry: {
-      'app': glob.sync('./vendor/**/*.js').concat(['./js/app.js'])
+      'app': './js/app.tsx'
     },
     output: {
       filename: '[name].js',
@@ -28,7 +30,7 @@ module.exports = (env, options) => {
     module: {
       rules: [
         {
-          test: /\.js$/,
+          test: /\.(j|t)sx?$/,
           exclude: /node_modules/,
           use: {
             loader: 'babel-loader'
@@ -48,6 +50,6 @@ module.exports = (env, options) => {
       new MiniCssExtractPlugin({ filename: '../css/app.css' }),
       new CopyWebpackPlugin([{ from: 'static/', to: '../' }])
     ]
-    .concat(devMode ? [new HardSourceWebpackPlugin()] : [])
+      .concat(devMode ? [new HardSourceWebpackPlugin()] : [])
   }
 };

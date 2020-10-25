@@ -7,7 +7,7 @@ I follow each episode and then extend the app with more functionalities that are
 
 ## Todo
 - [x] [API setup and data structures](https://www.youtube.com/watch?v=8MCmTiB3g6c)
-- [ ] [Set up React and Sass](https://www.youtube.com/watch?v=MxGQrmqubsI)
+- [x] [Set up React and Sass](https://www.youtube.com/watch?v=MxGQrmqubsI)
 - [ ] [Apollo, stealing design from Apple](https://www.youtube.com/watch?v=zObab-8qqQE)
 - [ ] [Toggling and updating](https://www.youtube.com/watch?v=Z7r-q8vntvQ)
 - [ ] [Deleting todo items, disappearing things](https://www.youtube.com/watch?v=saw_n_YTbR0)
