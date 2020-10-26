@@ -1,5 +1,13 @@
 import React from 'react';
+import client from './client';
+import { ApolloProvider } from '@apollo/react-hooks';
+import { TodoList } from './TodoList';
 
 export function TodoApp() {
-  return <h1>Hello from React</h1>
+
+  return (
+    <ApolloProvider client={client}>
+      <TodoList />
+    </ApolloProvider>
+  );
 }
