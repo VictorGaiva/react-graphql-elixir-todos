@@ -41,5 +41,7 @@ defmodule TodoListWeb.Router do
       pipe_through :browser
       live_dashboard "/dashboard", metrics: TodoListWeb.Telemetry
     end
+
+    IO.puts(Absinthe.Schema.to_sdl(TodoListWeb.Api.Schema))
   end
 end
