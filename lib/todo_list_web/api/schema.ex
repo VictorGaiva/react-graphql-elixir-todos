@@ -45,6 +45,16 @@ defmodule TodoListWeb.Api.Schema do
         Todos.toggle_by_id(item_id)
       end)
     end
+
+    field :delete_todo_item, :boolean do
+      arg(:id, non_null(:id))
+
+      resolve(fn %{id: id}, _ ->
+        todo = Todos.get_item!(id)
+        Todos.delete_item(todo)
+        {:ok, true}
+      end)
+    end
   end
 
   query do

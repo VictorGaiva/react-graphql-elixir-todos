@@ -9,10 +9,12 @@ interface TodoItemsQueryResult {
   todoItems: TodoItem[];
 }
 
+export const GET_TODO_ITEMS = gql`
+  { todoItems { id content isCompleted } }
+`;
+
 export function TodoList() {
-  const { data, loading } = useQuery<TodoItemsQueryResult>(gql`
-      { todoItems { id content isCompleted } }
-  `);
+  const { data } = useQuery<TodoItemsQueryResult>(GET_TODO_ITEMS);
 
   return (
     <div className="todo_list">
