@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
-import React, { FormEvent, useState } from 'react'
+import React, { useState } from 'react'
 import TodoItem from './TodoItem';
 import { GET_TODO_ITEMS } from './TodoList';
 
@@ -12,7 +12,7 @@ const CREATE_TODO_ITEM = gql`
   }
 `;
 
-export function NewTodoForm() {
+export function NewTodoForm({ onClose }: { onClose: () => void }) {
   const [content, setContent] = useState('');
   const [createTodoItem] = useMutation(CREATE_TODO_ITEM, {
     update(cache, { data: { createTodoItem: newTodo } }) {
@@ -24,25 +24,25 @@ export function NewTodoForm() {
     }
   });
 
-  const onSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (content.trim() !== "") {
-      createTodoItem({ variables: { content: content.trim() } }).then(() => {
-        setContent('');
-      })
-    }
-  }
 
   return (
-    <form className="todo_item new_todo_form" onSubmit={onSubmit}>
+    <div className="todo_item new_todo_form" >
       <button className="todo_item__toggle" disabled></button>
       <input
         value={content}
         onChange={e => setContent(e.target.value)}
+        onKeyDown={e => e.key === 'Enter' && (
+          content.trim() === ""
+            ? onClose()
+            : createTodoItem({ variables: { content: content.trim() } }).then(() => setContent(''))
+        )}
+        onBlur={() => content.trim() === ""
+          ? onClose()
+          : createTodoItem({ variables: { content: content.trim() } }).then(onClose)}
         type="text"
         className="todo_item__content"
         autoFocus
       />
-    </form>
+    </div>
   )
 }

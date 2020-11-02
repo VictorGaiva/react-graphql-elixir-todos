@@ -14,7 +14,7 @@ I'll follow each episode, while making minimal changes to the implementation. Af
 - [x] [Creating new records](https://www.youtube.com/watch?v=SzBuz3lKNF8)
 
 ## Extras
-- [ ] Improve UX for creating and deleting items.
+- [x] Improve UX for creating and deleting items.
 - [ ] Syncing todos between multiple machines, using subscriptions.
 - [ ] Folders for grouping todos.
 - [ ] Simple user registration and per-user segmentation.

@@ -27,7 +27,7 @@ export function TodoList() {
         {data?.todoItems.map(item =>
           <TodoListItem {...item} key={item.id} />
         )}
-        {showForm && <NewTodoForm />}
+        {showForm && <NewTodoForm onClose={() => setShowForm(false)} />}
       </div>
       <div className="todo_list__spacer">
       </div>

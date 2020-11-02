@@ -36,22 +36,24 @@ export function TodoListItem({ content, id, isCompleted }: TodoItem) {
     }
   });
 
-  const handleToggle = useCallback(() => toggleItem({ variables: { id } }), [id, toggleItem]);
-  const onChange = useCallback((e: ChangeEvent<HTMLInputElement>) => setText(e.target.value), [setText]);
-  const onBlur = useCallback(() => {
-    if (text === '') {
-      deleteItem({ variables: { id } });
-      return;
-    }
-    if (text === content) return;
-
-    updateItem({ variables: { id, content: text } })
-  }, [text, updateItem]);
+  const updateOrDelete = () =>
+    text.trim() !== content && (text.trim() === ''
+      ? deleteItem({ variables: { id } })
+      : updateItem({ variables: { id, content: text.trim() } }));
 
   return (
     <div className="todo_item">
-      <button className={`todo_item__toggle ${isCompleted ? 'todo_item__toggle--completed' : ''}`} onClick={handleToggle} />
-      <input className="todo_item__content" value={text} onChange={onChange} onBlur={onBlur} />
+      <button
+        className={`todo_item__toggle ${isCompleted ? 'todo_item__toggle--completed' : ''}`}
+        onClick={() => toggleItem({ variables: { id } })}
+      />
+      <input
+        className="todo_item__content"
+        value={text}
+        onChange={e => setText(e.target.value)}
+        onBlur={() => updateOrDelete()}
+        onKeyDown={e => e.key === 'Enter' && e.currentTarget.blur()}
+      />
     </div>
   )
 }
