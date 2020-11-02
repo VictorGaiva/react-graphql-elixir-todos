@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "esModuleInterop": true,
+    "allowJs": true,
+    "module": "commonjs",
+    "jsx": "react"
+  }
+}

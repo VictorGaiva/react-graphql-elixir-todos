@@ -11,7 +11,14 @@ I'll follow each episode, while making minimal changes to the implementation. Af
 - [x] [Apollo, stealing design from Apple](https://www.youtube.com/watch?v=zObab-8qqQE)
 - [x] [Toggling and updating](https://www.youtube.com/watch?v=Z7r-q8vntvQ)
 - [x] [Deleting todo items, disappearing things](https://www.youtube.com/watch?v=saw_n_YTbR0)
-- [ ] [Creating new records](https://www.youtube.com/watch?v=SzBuz3lKNF8)
+- [x] [Creating new records](https://www.youtube.com/watch?v=SzBuz3lKNF8)
+
+## Extras
+- [ ] Improve UX for creating and deleting items.
+- [ ] Syncing todos between multiple machines, using subscriptions.
+- [ ] Folders for grouping todos.
+- [ ] Simple user registration and per-user segmentation.
+- [ ] View only shareable links for folders.
 
 ## Author
 * Victor Gaíva
