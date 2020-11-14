@@ -1,8 +1,6 @@
-import { useMutation } from '@apollo/react-hooks';
-import { gql } from 'apollo-boost';
+import { gql, useMutation } from '@apollo/react-hooks';
 import React, { useState } from 'react'
-import TodoItem from './TodoItem';
-import { GET_TODO_ITEMS } from './TodoList';
+import { GET_TODO_ITEMS } from '../TodoList/gql';
 
 const CREATE_TODO_ITEM = gql`
   mutation new_item($content: String!){
@@ -12,9 +10,9 @@ const CREATE_TODO_ITEM = gql`
   }
 `;
 
-export function NewTodoForm({ onClose }: { onClose: () => void }) {
+export function NewTodoItem({ onClose }: { onClose: () => void }) {
   const [content, setContent] = useState('');
-  const [createTodoItem] = useMutation(CREATE_TODO_ITEM, {
+  const [createTodoItem] = useMutation<{ createTodoItem: TodoItem }>(CREATE_TODO_ITEM, {
     update(cache, { data: { createTodoItem: newTodo } }) {
       const { todoItems } = cache.readQuery<{ todoItems: TodoItem[] }>({ query: GET_TODO_ITEMS });
       cache.writeQuery({
@@ -23,7 +21,6 @@ export function NewTodoForm({ onClose }: { onClose: () => void }) {
       });
     }
   });
-
 
   return (
     <div className="todo_item new_todo_form" >

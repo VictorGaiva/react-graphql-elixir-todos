@@ -1,7 +1,6 @@
 import { gql, useMutation } from '@apollo/react-hooks';
-import React, { ChangeEvent, useCallback, useState } from 'react';
-import TodoItem from './TodoItem';
-import { GET_TODO_ITEMS } from './TodoList';
+import React, { useState } from 'react';
+import { GET_TODO_ITEMS } from '../TodoList/gql';
 
 const TOGGLE_TODO_ITEM = gql`
   mutation toggle($id:ID!){

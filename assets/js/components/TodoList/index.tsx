@@ -1,20 +1,15 @@
 import React, { useState } from 'react';
-import { gql } from 'apollo-boost';
 import { useQuery } from "@apollo/react-hooks";
 
-import TodoItem from './TodoItem';
-import { TodoListItem } from './TodoListItem';
+import { TodoListItem } from '../TodoItem';
 
-import { NewTodoButton } from './NewTodoButton';
-import { NewTodoForm } from './NewTodoForm';
+import { NewTodoButton } from '../NewTodoButton';
+import { NewTodoItem } from '../NewTodoItem';
+import { GET_TODO_ITEMS } from './gql';
 
 interface TodoItemsQueryResult {
   todoItems: TodoItem[];
 }
-
-export const GET_TODO_ITEMS = gql`
-  { todoItems { id content isCompleted } }
-`;
 
 export function TodoList() {
   const { data } = useQuery<TodoItemsQueryResult>(GET_TODO_ITEMS);
@@ -27,7 +22,7 @@ export function TodoList() {
         {data?.todoItems.map(item =>
           <TodoListItem {...item} key={item.id} />
         )}
-        {showForm && <NewTodoForm onClose={() => setShowForm(false)} />}
+        {showForm && <NewTodoItem onClose={() => setShowForm(false)} />}
       </div>
       <div className="todo_list__spacer">
       </div>
