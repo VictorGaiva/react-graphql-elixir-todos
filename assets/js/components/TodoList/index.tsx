@@ -5,7 +5,7 @@ import { TodoListItem } from '../TodoItem';
 
 import { NewTodoButton } from '../NewTodoButton';
 import { NewTodoItem } from '../NewTodoItem';
-import { GET_TODO_ITEMS } from './gql';
+import { GET_TODO_ITEMS } from '../../gql/query';
 
 interface TodoItemsQueryResult {
   todoItems: TodoItem[];

@@ -1,24 +1,8 @@
-import { gql, useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import React, { useState } from 'react';
-import { GET_TODO_ITEMS } from '../TodoList/gql';
 
-const TOGGLE_TODO_ITEM = gql`
-  mutation toggle($id:ID!){
-    toggleTodoItem(id:$id) { id isCompleted }
-  }
-`;
-
-const UPDATE_TODO_ITEM = gql`
-  mutation update($id:ID! $content: String!){
-    updateTodoItem(content:$content, id:$id){ id content }
-  }
-`;
-
-const DELETE_TODO_ITEM = gql`
-  mutation delete($id:ID!){
-    deleteTodoItem(id:$id)
-  }
-`;
+import { TOGGLE_TODO_ITEM, UPDATE_TODO_ITEM, DELETE_TODO_ITEM } from '../../gql/mutation';
+import { GET_TODO_ITEMS } from '../../gql/query';
 
 export function TodoListItem({ content, id, isCompleted }: TodoItem) {
   const [text, setText] = useState(content);

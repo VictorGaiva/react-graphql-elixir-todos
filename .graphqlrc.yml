@@ -1,0 +1,8 @@
+projects:
+  todo_app:
+    schema: http://localhost:3000/api/graphql
+    documents: assets/js/**
+    extensions:
+      endpoints:
+        default:
+          url: http://localhost:3000/api/graphql

@@ -1,14 +1,7 @@
-import { gql, useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import React, { useState } from 'react'
-import { GET_TODO_ITEMS } from '../TodoList/gql';
-
-const CREATE_TODO_ITEM = gql`
-  mutation new_item($content: String!){
-    createTodoItem(content: $content){
-      id isCompleted content
-    }
-  }
-`;
+import { CREATE_TODO_ITEM } from '../../gql/mutation';
+import { GET_TODO_ITEMS } from '../../gql/query';
 
 export function NewTodoItem({ onClose }: { onClose: () => void }) {
   const [content, setContent] = useState('');
