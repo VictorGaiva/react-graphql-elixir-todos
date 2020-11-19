@@ -22,7 +22,7 @@ module.exports = (env, options) => {
       'app': './js/app.tsx'
     },
     output: {
-      filename: '[name].js',
+      filename: 'app.js',
       path: path.resolve(__dirname, '../priv/static/js'),
       publicPath: '/js/'
     },

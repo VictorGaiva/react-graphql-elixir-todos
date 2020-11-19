@@ -1,7 +1,20 @@
 import { gql } from "@apollo/client";
 
-export const GET_TODO_ITEMS = gql`{
-  todoItems {
+export const ITEM_FRAGMENT = gql`
+  fragment itemFields on TodoItem{
     id content isCompleted
   }
-}`;
+`;
+
+export const FOLDER_FRAGMENT = gql`
+  fragment folderFields on Folder{
+    id name items{ ...itemFields }
+  }
+  ${ITEM_FRAGMENT}
+`;
+
+export const GET_FOLDERS = gql`{
+    folders { ...folderFields }
+  }
+  ${FOLDER_FRAGMENT}
+`;

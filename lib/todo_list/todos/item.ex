@@ -1,10 +1,11 @@
 defmodule TodoList.Todos.Item do
-  use Ecto.Schema
+  use TodoList.Base.Schema
   import Ecto.Changeset
 
   schema "items" do
     field :completed_at, :utc_datetime
     field :content, :string
+    belongs_to :folder, TodoList.Folders.Folder
 
     timestamps()
   end

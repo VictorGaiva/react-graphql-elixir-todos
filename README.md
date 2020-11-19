@@ -16,7 +16,7 @@ I'll follow each episode, while making minimal changes to the implementation. Af
 ## Extras
 - [x] Improve UX for creating and deleting items.
 - [ ] ~~Syncing todos between multiple machines, using subscriptions~~. (Current libs for subscriptions using Phoenix Channels don't support Apollo Client 3.0+. Will find a work around later.)
-- [ ] Folders for grouping todos.
+- [x] Folders for grouping todos.
 - [ ] Simple user registration and per-user segmentation.
 - [ ] View only shareable links for folders.
 

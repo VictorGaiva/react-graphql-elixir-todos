@@ -49,8 +49,8 @@ defmodule TodoList.Todos do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_item(attrs \\ %{}) do
-    %Item{}
+  def create_item(folder, attrs \\ %{}) do
+    Ecto.build_assoc(folder, :items)
     |> Item.changeset(attrs)
     |> Repo.insert()
   end

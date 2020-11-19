@@ -7,6 +7,8 @@ config :todo_list, TodoList.Repo,
   database: "todo_list_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
+  migration_primary_key: [name: :id, type: :binary_id],
+  migration_foreign_key: [column: :id, type: :binary_id],
   pool_size: 10
 
 # For development, we disable any cache and enable
