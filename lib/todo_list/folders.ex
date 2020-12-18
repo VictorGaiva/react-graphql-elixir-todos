@@ -7,6 +7,7 @@ defmodule TodoList.Folders do
   alias TodoList.Repo
 
   alias TodoList.Folders.Folder
+  alias TodoList.Users.User
   # alias TodoList.Todos.Item
 
   @doc """
@@ -18,7 +19,9 @@ defmodule TodoList.Folders do
       [%Folder{}, ...]
 
   """
-  def list_folders, do: Repo.all(Folder) |> Repo.preload(:items)
+  def list_folders, do: Repo.all(Folder)
+
+  def list_folders_from_user(%User{} = user), do: user |> Ecto.assoc(:folders) |> Repo.all()
 
   @doc """
   Gets a single folder.
@@ -34,7 +37,7 @@ defmodule TodoList.Folders do
       ** (Ecto.NoResultsError)
 
   """
-  def get_folder!(id), do: Repo.get!(Folder, id) |> Repo.preload(:items)
+  def get_folder!(id), do: Repo.get!(Folder, id)
 
   @doc """
   Creates a folder.
@@ -48,13 +51,10 @@ defmodule TodoList.Folders do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_folder(attrs \\ %{}) do
-    %Folder{}
+  def create_folder(%User{} = user, attrs \\ %{}) do
+    Ecto.build_assoc(user, :folders)
     |> Folder.changeset(attrs)
     |> Repo.insert()
-    |> case do
-      {:ok, folder} -> {:ok, Repo.preload(folder, :items)}
-    end
   end
 
   @doc """

@@ -1,5 +1,6 @@
 defmodule TodoListWeb.Api.Schema do
   use Absinthe.Schema
+
   alias TodoList.Todos
   alias TodoList.Folders
 
@@ -17,7 +18,23 @@ defmodule TodoListWeb.Api.Schema do
   object :folder do
     field :id, non_null(:id)
     field :name, non_null(:string)
-    field :items, list_of(non_null(:todo_item))
+
+    field :items, list_of(non_null(:todo_item)) do
+      resolve(fn folder, _, _ ->
+        {:ok, Todos.list_items_from_folder(folder)}
+      end)
+    end
+  end
+
+  object :user do
+    field :id, non_null(:id)
+    field :username, non_null(:string)
+
+    field :folders, list_of(non_null(:folder)) do
+      resolve(fn user, _, _ ->
+        {:ok, Folders.list_folders_from_user(user)}
+      end)
+    end
   end
 
   mutation do
@@ -54,10 +71,10 @@ defmodule TodoListWeb.Api.Schema do
       arg(:id, non_null(:id))
 
       resolve(fn %{id: id}, _ ->
-        Todos.get_item!(id)
-        |> Todos.delete_item()
-
-        {:ok, true}
+        case Todos.get_item!(id) |> Todos.delete_item() do
+          {:ok, _} -> {:ok, true}
+          {:error, _} -> {:ok, false}
+        end
       end)
     end
 
@@ -65,8 +82,14 @@ defmodule TodoListWeb.Api.Schema do
     field :create_folder, non_null(:folder) do
       arg(:name, non_null(:string))
 
-      resolve(fn %{name: name}, _ ->
-        Folders.create_folder(%{name: name})
+      resolve(fn %{name: name}, %{context: %{current_user: current_user}} ->
+        with {:ok, folder} <- Folders.create_folder(current_user, %{name: name}) do
+          {:ok, folder}
+        end
+      end)
+
+      resolve(fn _, _ ->
+        {:error, "Missing credentials."}
       end)
     end
 
@@ -93,15 +116,13 @@ defmodule TodoListWeb.Api.Schema do
   end
 
   query do
-    field :folders, non_null(list_of(:folder)) do
-      resolve(fn _, _ ->
-        {:ok, Folders.list_folders()}
+    field :self, non_null(:user) do
+      resolve(fn _, %{context: %{current_user: current_user}} ->
+        {:ok, current_user}
       end)
-    end
 
-    field :todo_items, non_null(list_of(:todo_item)) do
       resolve(fn _, _ ->
-        {:ok, Todos.list_items()}
+        {:error, "Missing credentials"}
       end)
     end
   end

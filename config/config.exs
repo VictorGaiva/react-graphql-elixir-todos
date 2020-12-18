@@ -29,3 +29,7 @@ config :phoenix, :json_library, Jason
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
+
+config :todo_list, TodoListWeb.Auth.Guardian,
+  issuer: "todo_list",
+  secret_key: "tNEWmO5/fKUmHPdaKUx/TW5tw4ipObJ4PtbPradoTJmL3nostBdnxpP1V4+1Z3jW"

@@ -7,5 +7,11 @@ interface TodoItem {
 interface Folder {
   id: string;
   name: string;
-  items: TodoItem[]
+  items: TodoItem[];
+}
+
+interface User {
+  id: string;
+  username: string;
+  folders: Folder[];
 }

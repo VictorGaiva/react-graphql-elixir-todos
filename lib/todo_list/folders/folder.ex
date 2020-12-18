@@ -5,6 +5,7 @@ defmodule TodoList.Folders.Folder do
   schema "folders" do
     field :name, :string
     has_many :items, TodoList.Todos.Item
+    belongs_to :user, TodoList.Users.User
 
     timestamps()
   end

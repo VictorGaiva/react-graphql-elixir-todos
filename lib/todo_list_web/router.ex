@@ -3,20 +3,13 @@ defmodule TodoListWeb.Router do
 
   pipeline :browser do
     plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_flash
-    plug :protect_from_forgery
+    # plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
 
   pipeline :api do
     plug :accepts, ["json"]
-  end
-
-  scope "/", TodoListWeb do
-    pipe_through :browser
-
-    get "/", PageController, :index
+    plug TodoListWeb.Auth.Context
   end
 
   # Other scopes may use custom stacks.
@@ -25,6 +18,15 @@ defmodule TodoListWeb.Router do
 
     get "/", Absinthe.Plug.GraphiQL, schema: TodoListWeb.Api.Schema, interface: :playground
     post "/", Absinthe.Plug, schema: TodoListWeb.Api.Schema
+
+    post "/login", TodoListWeb.Auth.Controller, :login
+    post "/sign-up", TodoListWeb.Auth.Controller, :sign_up
+    post "/username-availability", TodoListWeb.Auth.Controller, :username_available
+  end
+
+  scope "/", TodoListWeb do
+    pipe_through :browser
+    get "/*path", PageController, :index
   end
 
   # Enables LiveDashboard only for development

@@ -7,6 +7,7 @@ defmodule TodoList.Todos do
   alias TodoList.Repo
 
   alias TodoList.Todos.Item
+  alias TodoList.Folders.Folder
 
   @doc """
   Returns the list of items.
@@ -17,9 +18,10 @@ defmodule TodoList.Todos do
       [%Item{}, ...]
 
   """
-  def list_items do
-    Repo.all(Item)
-  end
+  def list_items, do: Repo.all(Item)
+
+  def list_items_from_folder(%Folder{} = folder),
+    do: folder |> Ecto.assoc(:items) |> Repo.all() || []
 
   @doc """
   Gets a single item.
@@ -49,7 +51,7 @@ defmodule TodoList.Todos do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_item(folder, attrs \\ %{}) do
+  def create_item(%Folder{} = folder, attrs \\ %{}) do
     Ecto.build_assoc(folder, :items)
     |> Item.changeset(attrs)
     |> Repo.insert()
