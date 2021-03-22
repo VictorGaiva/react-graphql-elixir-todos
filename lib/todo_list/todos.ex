@@ -70,6 +70,8 @@ defmodule TodoList.Todos do
 
   """
   def update_item(%Item{} = item, attrs) do
+    # KafkaEx.produce("test", 0, "hey")
+
     item
     |> Item.changeset(attrs)
     |> Repo.update()

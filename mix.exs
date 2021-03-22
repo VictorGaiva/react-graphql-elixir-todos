@@ -45,9 +45,14 @@ defmodule TodoList.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:absinthe, "~> 1.5.3"},
+      {:absinthe, "~> 1.6.3"},
       {:absinthe_plug, "~> 1.5"},
-      {:guardian, "~> 2.1.1"}
+      {:absinthe_phoenix, "~> 2.0"},
+      {:broadway_kafka, "~> 0.1.1"},
+      {:broadway, "~> 0.6.0"},
+      {:guardian, "~> 2.1.1"},
+      {:kafka_ex, "~> 0.12.1"},
+      {:snappy, git: "https://github.com/fdmanana/snappy-erlang-nif"}
     ]
   end
 

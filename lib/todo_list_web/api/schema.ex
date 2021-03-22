@@ -126,4 +126,24 @@ defmodule TodoListWeb.Api.Schema do
       end)
     end
   end
+
+  subscription do
+    field :todo_added, :todo_item do
+      arg(:folder_id, non_null(:id))
+
+      config(fn args, _ ->
+        {:ok, topic: "#{args.folder_id}/*"}
+      end)
+
+      trigger(:create_todo_item,
+        topic: fn item ->
+          "#{item.folder_id}/*"
+        end
+      )
+
+      resolve(fn item, _, _ ->
+        {:ok, item}
+      end)
+    end
+  end
 end

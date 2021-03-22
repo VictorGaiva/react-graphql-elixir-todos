@@ -10,11 +10,13 @@ defmodule TodoList.Application do
       # Start the Ecto repository
       TodoList.Repo,
       # Start the Telemetry supervisor
-      TodoListWeb.Telemetry,
+      # TodoListWeb.Telemetry,
       # Start the PubSub system
-      {Phoenix.PubSub, name: TodoList.PubSub},
+      {Phoenix.PubSub, [name: TodoListWeb.PubSub, adapter: Phoenix.PubSub.PG2]},
       # Start the Endpoint (http/https)
-      TodoListWeb.Endpoint
+      TodoListWeb.Endpoint,
+      {Absinthe.Subscription, TodoListWeb.Endpoint}
+      # {MyBroadway, []}
       # Start a worker by calling: TodoList.Worker.start_link(arg)
       # {TodoList.Worker, arg}
     ]

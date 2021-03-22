@@ -1,14 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { ApolloLink, ApolloProvider, NormalizedCacheObject } from "@apollo/react-hooks";
 
-import { HttpLink, ApolloClient, InMemoryCache, from } from "@apollo/client";
+import {
+  HttpLink,
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  NormalizedCacheObject,
+  split,
+  from, ApolloLink
+} from "@apollo/client";
 import { Switch, Redirect, Route, useHistory } from "react-router-dom";
-import { decode } from "jsonwebtoken";
+import decode from "jwt-decode";
 
 import HomePage from "./home";
 
 import LoginPage from "./login";
 import SignupPage from "./sign-up";
+import { AbsintheLink } from "../custom/absinthe";
+import { getMainDefinition } from "@apollo/client/utilities";
+import { PhoenixChannel, PhoenixSocket } from "../custom/phoenix-channels";
 
 export function TodoApp() {
   const [client, setClient] = useState<ApolloClient<NormalizedCacheObject> | null>(null);
@@ -39,7 +49,22 @@ export function TodoApp() {
     });
 
     const http = new HttpLink({ uri: "/api" });
-    const link = from([auth, http]);
+
+    const absintheLink = new AbsintheLink("ws://localhost:4000/socket/websocket?vsn=2.0.0");
+
+    const splitLink = split(
+      ({ query }) => {
+        const definition = getMainDefinition(query);
+        return (
+          definition.kind === 'OperationDefinition' &&
+          definition.operation === 'subscription'
+        );
+      },
+      absintheLink,
+      http,
+    );
+
+    const link = from([auth, splitLink]);
 
     setClient(
       new ApolloClient({
@@ -95,3 +120,4 @@ export function TodoApp() {
     </Switch>
   );
 }
+

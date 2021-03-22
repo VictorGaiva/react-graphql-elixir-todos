@@ -17,10 +17,15 @@ defmodule TodoListWeb.Auth.Context do
   end
 
   defp build_context(conn) do
-    with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
-         {:ok, claims} <- Guardian.decode_and_verify(token),
+    with ["Bearer " <> token] <- get_req_header(conn, "authorization") do
+      {:ok, context_from_token(token)}
+    end
+  end
+
+  def context_from_token(token) do
+    with {:ok, claims} <- Guardian.decode_and_verify(token),
          {:ok, current_user} <- Guardian.resource_from_claims(claims) do
-      {:ok, %{current_user: current_user}}
+      %{current_user: current_user}
     end
   end
 end

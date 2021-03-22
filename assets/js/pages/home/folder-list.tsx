@@ -1,15 +1,7 @@
 import React, { useState } from "react";
 
 import { makeStyles } from "@material-ui/styles";
-import {
-  Avatar,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  ListSubheader,
-  TextField,
-} from "@material-ui/core";
+import { Avatar, List, ListItem, ListItemAvatar, ListItemText, ListSubheader, TextField } from "@material-ui/core";
 import { Add as AddIcon } from "@material-ui/icons";
 import { useMutation } from "@apollo/client";
 import { GET_SELF } from "../../gql/query";

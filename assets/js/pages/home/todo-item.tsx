@@ -1,4 +1,3 @@
-import { useMutation } from "@apollo/react-hooks";
 import React, { useState } from "react";
 
 import { makeStyles } from "@material-ui/styles";
@@ -6,6 +5,7 @@ import { makeStyles } from "@material-ui/styles";
 import { TOGGLE_TODO_ITEM, UPDATE_TODO_ITEM, DELETE_TODO_ITEM, CREATE_TODO_ITEM } from "../../gql/mutation";
 import { GET_SELF } from "../../gql/query";
 import { InputProps } from "@material-ui/core";
+import { useMutation } from "@apollo/client";
 
 const useStyles = makeStyles({
   todoItem: {
