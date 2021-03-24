@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-import { Observable, PartialObserver, Subject } from "rxjs";
+import { Observable, PartialObserver, Subject, TimeInterval } from "rxjs";
 import { filter, map } from "rxjs/operators";
 
 const DEFAULT_VSN = "2.0.0";
@@ -78,8 +78,8 @@ export function isPushMessage<T extends PayloadType>(data: MessageFromSocket<T>)
 }
 
 export function isReplyMessage<T extends PayloadType>(data: MessageFromSocket<T>): data is ReplySocketMessage<T> {
-  const { join_ref, ref } = data as ReplySocketMessage<T>;
-  return (join_ref !== undefined && join_ref !== null) && (ref !== undefined && ref !== null);
+  const { ref } = data as ReplySocketMessage<T>;
+  return (ref !== undefined && ref !== null);
 }
 
 export function isBroadcastMessage<T extends PayloadType>(data: MessageFromSocket<T>): data is BroadcastSocketMessage<T> {
@@ -232,16 +232,25 @@ export class PhoenixSocket<R extends PayloadType = PayloadType, S extends Payloa
   private socket: WebSocket;
   private subject: Subject<MessageFromSocket<R>>;
 
-  private serializer: Serializer;
 
-  private open: Promise<void>;
+  private heartbeatChannel: PhoenixChannel<R, S>;
+  private heartbeatTimer: NodeJS.Timeout;
+  private heartbeatPromise: Promise<void> | null;
+
+  private queue: MessageToSocket<S>[];
+
+  private serializer: Serializer;
 
   constructor({ url, protocols }: { url: string; protocols?: string | string[] }) {
     this.socket = new WebSocket(url, protocols);
     this.subject = new Subject();
     this.serializer = new Serializer();
+    this.queue = [];
+    // No need to join the channel
+    this.heartbeatChannel = new PhoenixChannel<R, S>("phoenix", this);
 
     this.socket.addEventListener("close", (e) => {
+      clearInterval(this.heartbeatTimer);
       this.subject.complete();
     });
 
@@ -253,15 +262,29 @@ export class PhoenixSocket<R extends PayloadType = PayloadType, S extends Payloa
       }
     });
 
-    this.open = new Promise((res, rej) => {
-      this.socket.addEventListener("open", (e) => {
-        if (this.socket.readyState === WebSocket.OPEN) res();
-      });
+    this.socket.addEventListener("open", (e) => {
+      this.heartbeatTimer = setInterval(() => {
+        if (this.heartbeatPromise !== undefined) {
+          this.subject.error(e);
+          clearInterval(this.heartbeatTimer)
+        }
+        else {
+          this.heartbeatPromise = this.heartbeatChannel.run("heartbeat", {} as S, { force: true }).then(result => {
+            this.heartbeatPromise = undefined;
+            if (result.payload.status !== "ok") {
+              //TODO: Handle socket error?
+            }
+          })
+        }
+      }, 30000);
+      let queued: MessageToSocket<S>;
+      while (queued = this.queue.pop()) { this.send(queued); }
+    })
 
-      this.socket.addEventListener("error", (e) => {
-        this.subject.error(e);
-        rej();
-      });
+    // Todo: Reconnecting attempt
+    this.socket.addEventListener("error", (e) => {
+      this.subject.error(e);
+      clearInterval(this.heartbeatTimer)
     });
   }
 
@@ -271,7 +294,7 @@ export class PhoenixSocket<R extends PayloadType = PayloadType, S extends Payloa
 
   send(data: MessageToSocket<S>) {
     if (this.socket.readyState !== WebSocket.OPEN) {
-      this.open.then(() => this.socket.send(this.serializer.encode(data)));
+      this.queue.push(data)
     } else {
       this.socket.send(this.serializer.encode(data));
     }
@@ -294,7 +317,6 @@ export class PhoenixChannel<R extends PayloadType = PayloadType, S extends Paylo
   private queue: MessageToSocket<S>[]
 
   constructor(topic: string, socket: PhoenixSocket<R, S>) {
-    this.join_ref = uuid();
     this.sequence = 1;
     this.topic = topic;
     this._state = CHANNEL_STATE.closed;
@@ -359,6 +381,8 @@ export class PhoenixChannel<R extends PayloadType = PayloadType, S extends Paylo
   }
 
   async join() {
+    this.join_ref = uuid();
+
     if (this._state !== CHANNEL_STATE.joined) {
       this._state = CHANNEL_STATE.joining;
       try {
@@ -366,12 +390,8 @@ export class PhoenixChannel<R extends PayloadType = PayloadType, S extends Paylo
         if (result.payload.status === "ok") {
           this._state = CHANNEL_STATE.joined;
 
-          if (this.queue.length) {
-            for (const queued of this.queue) {
-              this.send(queued);
-            }
-            this.queue = [];
-          }
+          let queued: MessageToSocket<S>;
+          while (queued = this.queue.pop()) { this.send(queued); }
         }
         else console.log(result);
       } catch (err) {
@@ -442,12 +462,12 @@ export class PhoenixChannel<R extends PayloadType = PayloadType, S extends Paylo
         this._state = CHANNEL_STATE.leaving;
         break;
     }
-
     this.send({ event, join_ref: this.join_ref, ref, payload, topic: this.topic });
     return response;
   }
 
-  async run(event: string, payload?: S) {
+  async run(event: string, payload: S, opts?: { force: boolean }) {
+    const { force = false } = opts ?? {};
     // Keep the sequence within the scope
     const ref = `${this.sequence++}`;
 
@@ -477,7 +497,7 @@ export class PhoenixChannel<R extends PayloadType = PayloadType, S extends Paylo
         },
       });
     });
-    if (this._state === CHANNEL_STATE.joined)
+    if (this._state === CHANNEL_STATE.joined || force)
       this.send({ event, join_ref: this.join_ref, ref, payload, topic: this.topic });
     else
       this.queue.push({ event, join_ref: this.join_ref, ref, payload, topic: this.topic });
