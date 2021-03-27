@@ -16,9 +16,8 @@ import HomePage from "./home";
 
 import LoginPage from "./login";
 import SignupPage from "./sign-up";
-import { AbsintheLink } from "../custom/absinthe";
+import { AbsintheLink } from "catuaba";
 import { getMainDefinition } from "@apollo/client/utilities";
-import { PhoenixChannel, PhoenixSocket } from "../custom/phoenix-channels";
 
 export function TodoApp() {
   const [client, setClient] = useState<ApolloClient<NormalizedCacheObject> | null>(null);
