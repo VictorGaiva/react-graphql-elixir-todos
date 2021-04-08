@@ -20,6 +20,4 @@ defmodule TodoListWeb.UserSocket do
   end
 
   def id(_socket), do: nil
-
-  channel "room:*", TodoListWeb.RoomChannel
 end

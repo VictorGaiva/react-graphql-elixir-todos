@@ -36,12 +36,6 @@ export default function HomePage({ logout }: { logout: () => void }) {
 
   const folders = data?.self.folders ?? [];
   const folder = folders.find(({ id }) => selected === id);
-  const data2 = useSubscription<{ todoAdded: { id: string } }>(
-    gql`subscription TodoAdded{ todoAdded(folderId: "2bce4f96-95a4-4bb3-ba32-0adf7ec4bff4") { id } }`, {
-    onSubscriptionData: ({ subscriptionData }) => {
-      console.log(subscriptionData)
-    }
-  });
 
   return (
     <div className={container}>

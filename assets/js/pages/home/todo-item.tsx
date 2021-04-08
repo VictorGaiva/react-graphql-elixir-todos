@@ -48,15 +48,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function TodoListItem({
-  item,
-  onClose,
-  folderId,
-}: {
-  folderId: string;
-  item?: TodoItem;
-  onClose?: () => void;
-}) {
+export default function TodoListItem({ item, onClose, folderId, }: { folderId: string; item?: TodoItem; onClose?: () => void; }) {
   const { todoItem, todoItemContent, todoItemToggle, todoItemToggleCompleted } = useStyles();
   const [text, setText] = useState(item?.content ?? "");
 

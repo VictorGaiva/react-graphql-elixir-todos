@@ -3,10 +3,12 @@ defmodule TodoListWeb.Api.Schema do
 
   alias TodoList.Todos
   alias TodoList.Folders
+  import_types(Absinthe.Type.Custom)
 
   object :todo_item do
     field :id, non_null(:id)
     field :content, non_null(:string)
+    field :updated_at, non_null(:naive_datetime)
 
     field :is_completed, non_null(:boolean) do
       resolve(fn %{completed_at: completed_at}, _, _ ->
@@ -18,6 +20,7 @@ defmodule TodoListWeb.Api.Schema do
   object :folder do
     field :id, non_null(:id)
     field :name, non_null(:string)
+    field :updated_at, non_null(:naive_datetime)
 
     field :items, list_of(non_null(:todo_item)) do
       resolve(fn folder, _, _ ->
@@ -145,5 +148,17 @@ defmodule TodoListWeb.Api.Schema do
         {:ok, item}
       end)
     end
+  end
+
+  field :todo_changed, :todo_item do
+    arg(:folder_id, non_null(:id))
+
+    config(fn args, _ ->
+      {:ok, topic: "#{args.folder_id}/*"}
+    end)
+
+    resolve(fn item, _, _ ->
+      {:ok, item}
+    end)
   end
 end
